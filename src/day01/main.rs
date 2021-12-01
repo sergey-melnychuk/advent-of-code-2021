@@ -1,30 +1,21 @@
-use advent_of_code_2021::util::lines;
-
-fn input() -> Vec<i64> {
-    lines()
-        .into_iter()
-        .map(|line| line.parse().unwrap())
-        .collect()
-}
+use advent_of_code_2021::util::input;
 
 fn main() {
-    let input = input();
+    let input = input::<i64>();
 
-    let mut inc = 0;
+    let mut n = 0;
     for (a, b) in input.iter().zip(input.iter().skip(1)) {
         if b > a {
-            inc += 1;
+            n += 1;
         }
     }
+    println!("{}", n);
 
-    println!("{}", inc);
-
-    inc = 0;
+    n = 0;
     for (a, b) in input.windows(3).zip(input.windows(3).skip(1)) {
         if b.iter().sum::<i64>() > a.iter().sum::<i64>() {
-            inc += 1;
+            n += 1;
         }
     }
-
-    println!("{}", inc);
+    println!("{}", n);
 }
