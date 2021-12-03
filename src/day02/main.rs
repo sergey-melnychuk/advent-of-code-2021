@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use advent_of_code_2021::util::input;
+use std::str::FromStr;
 
 enum Move {
     Fwd(i32),
@@ -18,7 +18,7 @@ impl FromStr for Move {
             "up" => Ok(Move::Up(num)),
             "down" => Ok(Move::Down(num)),
             "forward" => Ok(Move::Fwd(num)),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
@@ -34,7 +34,7 @@ impl Pos {
         match m {
             Move::Up(x) => self.depth -= x,
             Move::Down(x) => self.depth += x,
-            Move::Fwd(x) => self.length += x
+            Move::Fwd(x) => self.length += x,
         }
     }
 }
