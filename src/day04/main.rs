@@ -7,14 +7,12 @@ type Score = u64;
 
 #[derive(Debug)]
 struct Board {
-    rows: Vec<Vec<Num>>
+    rows: Vec<Vec<Num>>,
 }
 
 impl Board {
-    fn flatten(&self) -> impl Iterator<Item=Num> + '_ {
-        self.rows.iter()
-            .flatten()
-            .cloned()
+    fn flatten(&self) -> impl Iterator<Item = Num> + '_ {
+        self.rows.iter().flatten().cloned()
     }
 
     fn columns(&self) -> usize {
@@ -24,11 +22,15 @@ impl Board {
     fn transpose(&self) -> Board {
         let columns = self.columns();
 
-        let rows = (0..columns).into_iter()
-            .map(|i| self.rows.iter()
-                .map(|r| r.get(i).unwrap())
-                .cloned()
-                .collect())
+        let rows = (0..columns)
+            .into_iter()
+            .map(|i| {
+                self.rows
+                    .iter()
+                    .map(|r| r.get(i).unwrap())
+                    .cloned()
+                    .collect()
+            })
             .collect();
 
         Board { rows }
@@ -37,11 +39,16 @@ impl Board {
     fn sets(&self) -> Vec<HashSet<Num>> {
         let mut result = Vec::with_capacity(self.rows.len() + self.columns());
 
-        let rows: Vec<HashSet<Num>> = self.rows.iter()
+        let rows: Vec<HashSet<Num>> = self
+            .rows
+            .iter()
             .map(|row| row.iter().cloned().collect())
             .collect();
 
-        let columns: Vec<HashSet<Num>> = self.transpose().rows.iter()
+        let columns: Vec<HashSet<Num>> = self
+            .transpose()
+            .rows
+            .iter()
             .map(|row| row.iter().cloned().collect())
             .collect();
 
@@ -64,7 +71,9 @@ impl Board {
     }
 
     fn score(&self, seen: HashSet<Num>, last: Num) -> Score {
-        let sum = self.flatten().into_iter()
+        let sum = self
+            .flatten()
+            .into_iter()
             .filter(|n| !seen.contains(n))
             .map(|n| n as Score)
             .sum::<Score>();
@@ -75,38 +84,45 @@ impl Board {
 
 fn parse(lines: &[String]) -> (Vec<Num>, Vec<Board>) {
     let mut split = lines.split(|line| line.is_empty());
-    let numbers: Vec<Num> = split.next().unwrap().iter().next().unwrap()
+    let numbers: Vec<Num> = split
+        .next()
+        .unwrap()
+        .iter()
+        .next()
+        .unwrap()
         .split(',')
         .map(|n| n.parse().unwrap())
         .collect();
 
-    let boards: Vec<Board> = split.into_iter()
-        .map(|rows| rows.iter()
-            .map(|row| row
-                .split_whitespace()
-                .into_iter()
-                .map(|n| n.parse().unwrap())
-                .collect())
-            .collect())
+    let boards: Vec<Board> = split
+        .into_iter()
+        .map(|rows| {
+            rows.iter()
+                .map(|row| {
+                    row.split_whitespace()
+                        .into_iter()
+                        .map(|n| n.parse().unwrap())
+                        .collect()
+                })
+                .collect()
+        })
         .map(|rows| Board { rows })
         .collect();
 
     (numbers, boards)
 }
 
-fn wins<'a>(numbers: &'a [Num], boards: &'a [Board]) -> impl Iterator<Item=Score> + 'a {
-    (1..numbers.len()).into_iter()
-        .flat_map(|turn| {
-            let seen = &numbers[0..turn];
-            boards.iter()
-                .filter(|board| {
-                    let prev = &seen[0..seen.len()-1];
-                    board.wins(prev).is_none()
-                })
-                .filter_map(move |board| {
-                    board.wins(seen)
-                })
-        })
+fn wins<'a>(numbers: &'a [Num], boards: &'a [Board]) -> impl Iterator<Item = Score> + 'a {
+    (1..numbers.len()).into_iter().flat_map(|turn| {
+        let seen = &numbers[0..turn];
+        boards
+            .iter()
+            .filter(|board| {
+                let prev = &seen[0..seen.len() - 1];
+                board.wins(prev).is_none()
+            })
+            .filter_map(move |board| board.wins(seen))
+    })
 }
 
 fn main() {

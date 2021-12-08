@@ -3,11 +3,10 @@ use advent_of_code_2021::util::lines;
 type Num = isize;
 
 fn total_fuel<F>(target: Num, positions: &[Num], cost: F) -> Num
-    where F: Fn(Num, Num) -> Num
+where
+    F: Fn(Num, Num) -> Num,
 {
-    positions.iter()
-        .map(|pos| cost(target, *pos))
-        .sum()
+    positions.iter().map(|pos| cost(target, *pos)).sum()
 }
 
 fn cost1(target: Num, from: Num) -> Num {
@@ -30,13 +29,15 @@ fn main() {
     let min = *positions.iter().min().unwrap();
     let max = *positions.iter().max().unwrap();
 
-    let (_target, fuel) = (min..=max).into_iter()
+    let (_target, fuel) = (min..=max)
+        .into_iter()
         .map(|target| (target, total_fuel(target, &positions, cost1)))
         .min_by_key(|(_, fuel)| *fuel)
         .unwrap();
     println!("{}", fuel);
 
-    let (_target, fuel) = (min..=max).into_iter()
+    let (_target, fuel) = (min..=max)
+        .into_iter()
         .map(|target| (target, total_fuel(target, &positions, cost2)))
         .min_by_key(|(_, fuel)| *fuel)
         .unwrap();

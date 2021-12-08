@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use advent_of_code_2021::util::input;
+use std::collections::HashMap;
 use std::str::FromStr;
 
 type Num = i32;
@@ -41,9 +41,7 @@ impl Line {
             let lo = self.at.x.min(self.to.x);
             let hi = self.at.x.max(self.to.x);
             let y = self.at.y;
-            return (lo..=hi).into_iter()
-                .map(|x| Dot::of(x, y))
-                .collect();
+            return (lo..=hi).into_iter().map(|x| Dot::of(x, y)).collect();
         }
 
         if self.is_vertical() {
@@ -51,20 +49,16 @@ impl Line {
             let lo = self.at.y.min(self.to.y);
             let hi = self.at.y.max(self.to.y);
             let x = self.at.x;
-            return (lo..=hi).into_iter()
-                .map(|y| Dot::of(x, y))
-                .collect();
+            return (lo..=hi).into_iter().map(|y| Dot::of(x, y)).collect();
         }
 
         let dx = self.to.x - self.at.x;
         let dy = self.to.y - self.at.y;
         assert_eq!(dx.abs(), dy.abs());
 
-        (0..=dx.abs()).into_iter()
-            .map(|d| Dot::of(
-                self.at.x + d * dx.signum(),
-                self.at.y + d * dy.signum(),
-            ))
+        (0..=dx.abs())
+            .into_iter()
+            .map(|d| Dot::of(self.at.x + d * dx.signum(), self.at.y + d * dy.signum()))
             .collect()
     }
 }
@@ -95,8 +89,9 @@ impl FromStr for Line {
     }
 }
 
-fn solve<'a>(lines: impl Iterator<Item=&'a Line>) -> usize {
-    lines.flat_map(|line| line.dots())
+fn solve<'a>(lines: impl Iterator<Item = &'a Line>) -> usize {
+    lines
+        .flat_map(|line| line.dots())
         .fold(HashMap::new(), |mut map, dot| {
             *map.entry(dot).or_insert(0) += 1;
             map
@@ -109,8 +104,11 @@ fn solve<'a>(lines: impl Iterator<Item=&'a Line>) -> usize {
 fn main() {
     let lines: Vec<Line> = input();
 
-    let n = solve(lines.iter()
-        .filter(|line| line.is_horizontal() || line.is_vertical()));
+    let n = solve(
+        lines
+            .iter()
+            .filter(|line| line.is_horizontal() || line.is_vertical()),
+    );
     println!("{}", n);
 
     let n = solve(lines.iter());
@@ -123,9 +121,7 @@ mod tests {
 
     #[test]
     fn test_gcd() {
-        let cases = vec![
-            (54, 24, 6),
-        ];
+        let cases = vec![(54, 24, 6)];
 
         for (a, b, expected) in cases {
             let actual = gcd(a, b);

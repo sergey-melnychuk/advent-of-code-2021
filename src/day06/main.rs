@@ -4,8 +4,8 @@ type Num = usize;
 
 fn day(bins: &mut [Num; 9]) {
     let ready = bins[0];
-    for i in 0..bins.len()-1 {
-        bins[i] = bins[i+1];
+    for i in 0..bins.len() - 1 {
+        bins[i] = bins[i + 1];
     }
     bins[6] += ready;
     bins[8] = ready;
@@ -30,7 +30,7 @@ fn main() {
     }
     println!("{}", bins.iter().sum::<Num>());
 
-    for _ in 0..256-80 {
+    for _ in 0..256 - 80 {
         day(&mut bins);
     }
     println!("{}", bins.iter().sum::<Num>());

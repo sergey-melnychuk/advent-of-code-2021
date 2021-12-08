@@ -82,7 +82,8 @@ fn solve(observation: &Observation) -> Num {
 
     let one = mapping[1].clone();
     let four = mapping[4].clone();
-    pattern235.map(
+    pattern235
+        .map(
             |digit| match (overlap(&digit, &one), overlap(&digit, &four)) {
                 (2, _) => (digit, 3),
                 (_, 3) => (digit, 5),
@@ -94,7 +95,8 @@ fn solve(observation: &Observation) -> Num {
             mapping[number] = digit;
         });
 
-    pattern069.map(
+    pattern069
+        .map(
             |digit| match (overlap(&digit, &one), overlap(&digit, &four)) {
                 (_, 4) => (digit, 9),
                 (1, 3) => (digit, 6),
