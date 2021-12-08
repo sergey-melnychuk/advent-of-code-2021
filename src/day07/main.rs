@@ -24,7 +24,6 @@ fn main() {
         .into_iter()
         .map(|num| num.parse::<Num>().unwrap())
         .collect::<Vec<_>>();
-    println!("{}", positions.len());
 
     let min = *positions.iter().min().unwrap();
     let max = *positions.iter().max().unwrap();
