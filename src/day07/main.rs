@@ -5,7 +5,7 @@ type Num = isize;
 fn total_fuel<F>(target: Num, positions: &[Num], cost: F) -> Num
     where F: Fn(Num, Num) -> Num
 {
-    positions.into_iter()
+    positions.iter()
         .map(|pos| cost(target, *pos))
         .sum()
 }

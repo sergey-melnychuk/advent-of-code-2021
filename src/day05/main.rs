@@ -85,10 +85,10 @@ impl FromStr for Line {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut split = s.split(" -> ");
-        let mut fst = split.next().unwrap().split(",");
+        let mut fst = split.next().unwrap().split(',');
         let x1 = fst.next().unwrap().parse().unwrap();
         let y1 = fst.next().unwrap().parse().unwrap();
-        let mut snd = split.next().unwrap().split(",");
+        let mut snd = split.next().unwrap().split(',');
         let x2 = snd.next().unwrap().parse().unwrap();
         let y2 = snd.next().unwrap().parse().unwrap();
         Ok(Line::of(Dot::of(x1, y1), Dot::of(x2, y2)))

@@ -51,7 +51,7 @@ impl Board {
     }
 
     fn wins(&self, seq: &[Num]) -> Option<Score> {
-        let seen: HashSet<Num> = seq.clone().into_iter().cloned().collect();
+        let seen: HashSet<Num> = seq.iter().cloned().collect();
 
         for set in self.sets() {
             if seen.is_superset(&set) {
@@ -60,7 +60,7 @@ impl Board {
             }
         }
 
-        return None;
+        None
     }
 
     fn score(&self, seen: HashSet<Num>, last: Num) -> Score {
@@ -75,13 +75,13 @@ impl Board {
 
 fn parse(lines: &[String]) -> (Vec<Num>, Vec<Board>) {
     let mut split = lines.split(|line| line.is_empty());
-    let numbers: Vec<Num> = split.next().unwrap().into_iter().next().unwrap()
+    let numbers: Vec<Num> = split.next().unwrap().iter().next().unwrap()
         .split(',')
         .map(|n| n.parse().unwrap())
         .collect();
 
     let boards: Vec<Board> = split.into_iter()
-        .map(|rows| rows.into_iter()
+        .map(|rows| rows.iter()
             .map(|row| row
                 .split_whitespace()
                 .into_iter()
@@ -98,13 +98,13 @@ fn wins<'a>(numbers: &'a [Num], boards: &'a [Board]) -> impl Iterator<Item=Score
     (1..numbers.len()).into_iter()
         .flat_map(|turn| {
             let seen = &numbers[0..turn];
-            boards.into_iter()
+            boards.iter()
                 .filter(|board| {
                     let prev = &seen[0..seen.len()-1];
                     board.wins(prev).is_none()
                 })
                 .filter_map(move |board| {
-                    board.wins(&seen)
+                    board.wins(seen)
                 })
         })
 }

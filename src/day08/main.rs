@@ -15,7 +15,7 @@ impl FromStr for Observation {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut it = s.split(" | ").into_iter();
+        let mut it = s.split(" | ");
         let before = it.next().unwrap();
         let after = it.next().unwrap();
 
@@ -73,20 +73,16 @@ fn solve(observation: &Observation) -> Num {
         .patterns
         .iter()
         .filter(|digit| digit.len() == 5)
-        .cloned()
-        .collect::<Vec<_>>();
+        .cloned();
     let pattern069 = observation
         .patterns
         .iter()
         .filter(|digit| digit.len() == 6)
-        .cloned()
-        .collect::<Vec<_>>();
+        .cloned();
 
     let one = mapping[1].clone();
     let four = mapping[4].clone();
-    pattern235
-        .into_iter()
-        .map(
+    pattern235.map(
             |digit| match (overlap(&digit, &one), overlap(&digit, &four)) {
                 (2, _) => (digit, 3),
                 (_, 3) => (digit, 5),
@@ -98,9 +94,7 @@ fn solve(observation: &Observation) -> Num {
             mapping[number] = digit;
         });
 
-    pattern069
-        .into_iter()
-        .map(
+    pattern069.map(
             |digit| match (overlap(&digit, &one), overlap(&digit, &four)) {
                 (_, 4) => (digit, 9),
                 (1, 3) => (digit, 6),
@@ -123,7 +117,7 @@ fn solve(observation: &Observation) -> Num {
                 .map(|(i, _)| i as Num)
                 .unwrap()
         })
-        .fold(0 as Num, |sum, x| sum * 10 + x)
+        .fold(0, |sum, x| sum * 10 + x)
 }
 
 fn main() {
@@ -143,7 +137,7 @@ fn main() {
         .count();
     println!("{}", part1);
 
-    let part2 = input.iter().map(|obs| solve(obs)).sum::<Num>();
+    let part2 = input.iter().map(solve).sum::<Num>();
     println!("{}", part2);
 }
 

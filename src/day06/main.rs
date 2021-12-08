@@ -20,7 +20,7 @@ fn main() {
     assert!(*numbers.iter().min().unwrap() >= 1);
     assert!(*numbers.iter().max().unwrap() <= 8);
 
-    let mut bins = [0 as Num; 9];
+    let mut bins: [Num; 9] = [0; 9];
     for num in numbers {
         bins[num] += 1;
     }
