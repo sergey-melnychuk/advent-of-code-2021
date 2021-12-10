@@ -43,12 +43,7 @@ fn basin(grid: &[Vec<u8>], row: usize, col: usize) -> usize {
 fn main() {
     let grid: Grid = lines()
         .into_iter()
-        .map(|line| {
-            line.chars()
-                .into_iter()
-                .map(|c| c as u8 - b'0')
-                .collect()
-        })
+        .map(|line| line.chars().into_iter().map(|c| c as u8 - b'0').collect())
         .collect();
     let (rows, cols) = (grid.len(), grid[0].len());
 
