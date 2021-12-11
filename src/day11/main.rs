@@ -1,5 +1,5 @@
-use std::collections::HashSet;
 use advent_of_code_2021::util::lines;
+use std::collections::HashSet;
 
 type Grid = Vec<Vec<u8>>;
 
@@ -40,9 +40,13 @@ fn done(grid: &[Vec<u8>]) -> bool {
 
 fn cells(grid: &[Vec<u8>]) -> Vec<(usize, usize, u8)> {
     let (rows, cols) = (grid.len(), grid[0].len());
-    (0..rows).into_iter()
-        .flat_map(move |row| (0..cols).into_iter()
-            .map(move |col| (row, col, grid[row][col])))
+    (0..rows)
+        .into_iter()
+        .flat_map(move |row| {
+            (0..cols)
+                .into_iter()
+                .map(move |col| (row, col, grid[row][col]))
+        })
         .collect()
 }
 
@@ -54,32 +58,24 @@ fn step(grid: &mut Grid) -> usize {
     let mut fired: HashSet<(usize, usize)> = HashSet::new();
 
     grid.iter_mut()
-        .for_each(|row| row.iter_mut()
-            .for_each(|cell| *cell += 1));
+        .for_each(|row| row.iter_mut().for_each(|cell| *cell += 1));
 
     while !done(grid) {
-        cells(grid).into_iter()
-            .filter_map(|(row, col, cell)|
-                if cell > 9 {
-                    Some((row, col))
-                } else {
-                    None
-                })
+        cells(grid)
+            .into_iter()
+            .filter_map(|(row, col, cell)| if cell > 9 { Some((row, col)) } else { None })
             .for_each(|cell @ (row, col)| {
                 fired.insert(cell);
                 grid[row][col] = 0;
-                adj(grid, row, col).into_iter()
-                    .for_each(|(row, col)| {
-                        grid[row][col] += 1;
-                    })
+                adj(grid, row, col).into_iter().for_each(|(row, col)| {
+                    grid[row][col] += 1;
+                })
             });
     }
 
-    fired.iter()
-        .cloned()
-        .for_each(|(row, col)| {
-            grid[row][col] = 0;
-        });
+    fired.iter().cloned().for_each(|(row, col)| {
+        grid[row][col] = 0;
+    });
     fired.len()
 }
 
