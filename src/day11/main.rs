@@ -34,19 +34,20 @@ fn adj(grid: &[Vec<u8>], row: usize, col: usize) -> Vec<(usize, usize)> {
     adj
 }
 
-fn done(grid: &Grid) -> bool {
+fn done(grid: &[Vec<u8>]) -> bool {
     grid.iter().all(|row| row.iter().all(|cell| *cell <= 9))
 }
 
-fn cells<'a>(grid: &'a Grid) -> impl Iterator<Item=(usize, usize, u8)> + 'a {
+fn cells(grid: &[Vec<u8>]) -> Vec<(usize, usize, u8)> {
     let (rows, cols) = (grid.len(), grid[0].len());
     (0..rows).into_iter()
         .flat_map(move |row| (0..cols).into_iter()
             .map(move |col| (row, col, grid[row][col])))
+        .collect()
 }
 
-fn all(grid: &Grid) -> bool {
-    cells(grid).all(|(_, _, cell)| cell == 0)
+fn all(grid: &[Vec<u8>]) -> bool {
+    cells(grid).iter().all(|(_, _, cell)| *cell == 0)
 }
 
 fn step(grid: &mut Grid) -> usize {
@@ -57,16 +58,13 @@ fn step(grid: &mut Grid) -> usize {
             .for_each(|cell| *cell += 1));
 
     while !done(grid) {
-        let cells = cells(grid)
+        cells(grid).into_iter()
             .filter_map(|(row, col, cell)|
                 if cell > 9 {
                     Some((row, col))
                 } else {
                     None
                 })
-            .collect::<Vec<_>>();
-
-        cells.into_iter()
             .for_each(|cell @ (row, col)| {
                 fired.insert(cell);
                 grid[row][col] = 0;
