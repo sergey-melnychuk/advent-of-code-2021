@@ -42,7 +42,7 @@ fn expand(input: String, rules: &HashMap<(char, char), char>) -> String {
 
 fn count(line: &str) -> HashMap<char, usize> {
     let mut result: HashMap<char, usize> = HashMap::new();
-    for c in line.chars().into_iter() {
+    for c in line.chars() {
         *result.entry(c).or_default() += 1;
     }
     result
