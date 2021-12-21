@@ -171,12 +171,10 @@ fn iter(packet: &Packet, sum: &mut Bit) {
 fn eval(packet: &Packet) -> Bit {
     match packet {
         Packet::Literal(_, val) => *val,
-        Packet::Group(_, id, packets) if *id == 0 => packets.iter().map(|p| eval(p)).sum::<Bit>(),
-        Packet::Group(_, id, packets) if *id == 1 => {
-            packets.iter().map(|p| eval(p)).product::<Bit>()
-        }
-        Packet::Group(_, id, packets) if *id == 2 => packets.iter().map(|p| eval(p)).min().unwrap(),
-        Packet::Group(_, id, packets) if *id == 3 => packets.iter().map(|p| eval(p)).max().unwrap(),
+        Packet::Group(_, id, packets) if *id == 0 => packets.iter().map(eval).sum::<Bit>(),
+        Packet::Group(_, id, packets) if *id == 1 => packets.iter().map(eval).product::<Bit>(),
+        Packet::Group(_, id, packets) if *id == 2 => packets.iter().map(eval).min().unwrap(),
+        Packet::Group(_, id, packets) if *id == 3 => packets.iter().map(eval).max().unwrap(),
         Packet::Group(_, id, packets) if *id == 5 => {
             let fst = eval(&packets[0]);
             let snd = eval(&packets[1]);
