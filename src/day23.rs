@@ -6,8 +6,7 @@ struct Pos(usize, usize);
 
 impl Pos {
     fn dist(&self, that: &Self) -> usize {
-        self.0.max(that.0) - self.0.min(that.0) +
-        self.1.max(that.1) - self.1.min(that.1)
+        self.0.max(that.0) - self.0.min(that.0) + self.1.max(that.1) - self.1.min(that.1)
     }
 }
 
@@ -19,15 +18,27 @@ struct Game {
 
 impl Game {
     fn movable(&self) -> Vec<(char, Pos)> {
-        let hall: Vec<(char, Pos)> = self.hallway.iter().enumerate()
-            .flat_map(|(i, c)| if *c != '.' {Some((*c, Pos(i, 0)))} else {None})
+        let hall: Vec<(char, Pos)> = self
+            .hallway
+            .iter()
+            .enumerate()
+            .flat_map(|(i, c)| {
+                if *c != '.' {
+                    Some((*c, Pos(i, 0)))
+                } else {
+                    None
+                }
+            })
             .filter(|(c, _)| {
-                let room = target(*c)/2-1;
+                let room = target(*c) / 2 - 1;
                 self.rooms[room].iter().all(|x| x == c || *x == '.')
             })
             .collect();
 
-        let rooms: Vec<(char, Pos)> = self.rooms.iter().enumerate()
+        let rooms: Vec<(char, Pos)> = self
+            .rooms
+            .iter()
+            .enumerate()
             .flat_map(|(i, room)| {
                 let idx = 2 + i * 2;
 
@@ -35,8 +46,10 @@ impl Game {
                     .cloned()
                     .enumerate()
                     .filter(|(_, c)| *c != '.')
-                    .filter(|(i, c)| (target(*c) != idx) || room[*i+1..].iter().any(|x| target(*x) != idx))
-                    .map(|(i, c)| (c, Pos(idx, i+1)))
+                    .filter(|(i, c)| {
+                        (target(*c) != idx) || room[*i + 1..].iter().any(|x| target(*x) != idx)
+                    })
+                    .map(|(i, c)| (c, Pos(idx, i + 1)))
                     .next()
             })
             .collect();
@@ -62,15 +75,17 @@ impl Game {
                 .filter(|i| *i != pos.0)
                 .all(|i| self.hallway[i] == '.');
 
-            let idx = target/2-1;
+            let idx = target / 2 - 1;
             let has_room = self.rooms[idx].iter().all(|x| *x == '.' || *x == actor);
             //println!("has_path={} has_room={}", has_path, has_room);
 
             if has_room && has_path {
-                let pos = self.rooms[idx].iter().enumerate()
+                let pos = self.rooms[idx]
+                    .iter()
+                    .enumerate()
                     .rev()
                     .find(|(_, x)| **x == '.')
-                    .map(|(i, _)| Pos(target, i+1))
+                    .map(|(i, _)| Pos(target, i + 1))
                     .unwrap();
                 return vec![pos];
             }
@@ -128,8 +143,8 @@ impl Game {
         if pos.1 == 0 {
             self.hallway.get_mut(pos.0).unwrap()
         } else {
-            let room = self.rooms.get_mut(pos.0/2-1).unwrap();
-            room.get_mut(pos.1-1).unwrap()
+            let room = self.rooms.get_mut(pos.0 / 2 - 1).unwrap();
+            room.get_mut(pos.1 - 1).unwrap()
         }
     }
 
@@ -144,10 +159,10 @@ impl Game {
     }
 
     fn done(&self) -> bool {
-        self.rooms[0].iter().all(|x| *x == 'A') &&
-        self.rooms[1].iter().all(|x| *x == 'B') &&
-        self.rooms[2].iter().all(|x| *x == 'C') &&
-        self.rooms[3].iter().all(|x| *x == 'D')
+        self.rooms[0].iter().all(|x| *x == 'A')
+            && self.rooms[1].iter().all(|x| *x == 'B')
+            && self.rooms[2].iter().all(|x| *x == 'C')
+            && self.rooms[3].iter().all(|x| *x == 'D')
     }
 }
 
@@ -157,7 +172,7 @@ fn target(actor: char) -> usize {
         'B' => 4,
         'C' => 6,
         'D' => 8,
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -167,7 +182,7 @@ fn cost(actor: char) -> usize {
         'B' => 10,
         'C' => 100,
         'D' => 1000,
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -242,7 +257,6 @@ fn main() {
     };
     println!("{}", bfs(game));
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -331,13 +345,10 @@ mod tests {
         let p = Pos(6, 1);
         let b = ('B', p);
         assert_eq!(game.movable(), vec![b]);
-        assert_eq!(game.moves('B', &p), vec![
-            Pos(5, 0),
-            Pos(3, 0),
-            Pos(1, 0),
-            Pos(0, 0),
-            Pos(7, 0),
-        ]);
+        assert_eq!(
+            game.moves('B', &p),
+            vec![Pos(5, 0), Pos(3, 0), Pos(1, 0), Pos(0, 0), Pos(7, 0),]
+        );
     }
 
     #[test]
@@ -359,7 +370,7 @@ mod tests {
         let p = Pos(10, 0);
         let a = ('A', p);
         assert_eq!(game.movable(), vec![a]);
-        assert_eq!(game.moves('A', &p), vec![Pos(2, 1), ]);
+        assert_eq!(game.moves('A', &p), vec![Pos(2, 1),]);
     }
 
     #[test]
