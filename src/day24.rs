@@ -94,34 +94,37 @@ impl Alu {
     }
 }
 
-// inspiration: https://github.com/emilyskidsister/aoc/blob/main/p2021_24/src/lib.rs
-fn dfs(code: &[String], mut alu: Alu, seen: &mut HashMap<Alu, Option<usize>>) -> Option<usize> {
-    println!("{:?}", alu);
-    if let Some(result) = seen.get(&alu).cloned() {
+fn dfs(code: &[String], init: &Alu, seen: &mut HashMap<Alu, Option<usize>>) -> Option<usize> {
+    if let Some(result) = seen.get(init).cloned() {
         return result;
     }
 
-    for inp in (1..10).rev() {
-        while !alu.end(code) {
-            alu.put(code, inp);
-            alu.run(code);
+    for x in (1..10).rev() {
+        let mut alu = init.clone();
+        alu.put(code, x as i64);
+        alu.run(code);
 
-            if let Some(best) = dfs(code, alu, seen) {
-                let next = best * 10 + inp as usize;
-                seen.insert(alu, Some(next));
+        if alu.end(code) {
+            if alu.z == 0 {
+                seen.insert(alu, Some(x));
+                println!("{}", x);
+                return Some(x);
             } else {
                 break;
             }
         }
 
-        if alu.z == 0 {
-            seen.insert(alu, Some(inp as usize));
-            println!("{}", inp);
-            return Some(inp as usize);
+        if let Some(hit) = dfs(code, &alu, seen) {
+            let hit = hit * 10 + x;
+            seen.insert(alu, Some(hit));
+            println!("{}", hit);
+            return Some(hit);
+        } else {
+            continue;
         }
     }
 
-    seen.insert(alu, None);
+    seen.insert(init.clone(), None);
     None
 }
 
@@ -129,7 +132,8 @@ fn main() {
     let code = lines();
 
     let mut seen = HashMap::new();
-    let part1 = dfs(&code, Alu::default(), &mut seen).unwrap_or_default();
+    let alu = Alu::default();
+    let part1 = dfs(&code, &alu, &mut seen).unwrap();
     println!("{}", part1);
 
     // 29599469991739
