@@ -8,7 +8,7 @@ struct Grid {
 
 impl Grid {
     fn right(&mut self, row: usize, mut col: usize) -> &mut char {
-        if col >= self.cols-1 {
+        if col >= self.cols - 1 {
             col = 0;
         } else {
             col += 1;
@@ -17,7 +17,7 @@ impl Grid {
     }
 
     fn below(&mut self, mut row: usize, col: usize) -> &mut char {
-        if row >= self.rows-1 {
+        if row >= self.rows - 1 {
             row = 0;
         } else {
             row += 1;
@@ -26,29 +26,34 @@ impl Grid {
     }
 
     fn get_mut(&mut self, row: usize, col: usize) -> &mut char {
-        assert!(row >= 0 && row < self.rows);
-        assert!(col >= 0 && col < self.cols);
+        assert!(row < self.rows);
+        assert!(col < self.cols);
         self.chars.get_mut(row).unwrap().get_mut(col).unwrap()
     }
 
     fn get(&self, row: usize, col: usize) -> char {
-        assert!(row >= 0 && row < self.rows);
-        assert!(col >= 0 && col < self.cols);
+        assert!(row < self.rows);
+        assert!(col < self.cols);
         *self.chars.get(row).unwrap().get(col).unwrap()
     }
 
-
     fn find(&self, target: char) -> Vec<(usize, usize)> {
-        (0..self.rows).into_iter()
-            .flat_map(|row| (0..self.cols).into_iter()
-                .map(move |col| (row, col))
-                .collect::<Vec<_>>())
+        (0..self.rows)
+            .into_iter()
+            .flat_map(|row| {
+                (0..self.cols)
+                    .into_iter()
+                    .map(move |col| (row, col))
+                    .collect::<Vec<_>>()
+            })
             .filter(|(row, col)| self.get(*row, *col) == target)
             .collect()
     }
 
     fn dump(&self) -> String {
-        let lines = self.chars.iter()
+        let lines = self
+            .chars
+            .iter()
             .map(|vec| vec.iter().cloned().collect::<String>())
             .collect::<Vec<_>>();
 
@@ -60,21 +65,19 @@ fn parse(lines: &[String]) -> Grid {
     let rows = lines.len();
     let cols = lines.iter().map(|line| line.len()).max().unwrap();
 
-    let chars = lines.iter()
+    let chars = lines
+        .iter()
         .map(|line| line.chars().collect::<Vec<_>>())
         .collect();
 
-    Grid {
-        rows,
-        cols,
-        chars,
-    }
+    Grid { rows, cols, chars }
 }
 
 fn step(grid: &mut Grid) -> usize {
     let mut moves = 0;
 
-    let more = grid.find('>')
+    let more = grid
+        .find('>')
         .into_iter()
         .filter(|(row, col)| *grid.right(*row, *col) == '.')
         .collect::<Vec<_>>();
@@ -87,7 +90,8 @@ fn step(grid: &mut Grid) -> usize {
         }
     }
 
-    let down = grid.find('v')
+    let down = grid
+        .find('v')
         .into_iter()
         .filter(|(row, col)| *grid.below(*row, *col) == '.')
         .collect::<Vec<_>>();

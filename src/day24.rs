@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use advent_of_code_2021::util::lines;
+use std::collections::HashMap;
 
 #[derive(Debug, Default, Eq, PartialEq, Hash, Copy, Clone)]
 struct Alu {
@@ -17,7 +17,7 @@ impl Alu {
             "x" => &mut self.x,
             "y" => &mut self.y,
             "z" => &mut self.z,
-            r => panic!("no such register: {}", r)
+            r => panic!("no such register: {}", r),
         }
     }
 
@@ -62,39 +62,44 @@ impl Alu {
             "inp" => {
                 assert!(inp > 0 && inp < 10);
                 *self.get(tokens[1]) = inp;
-            },
-            "add"  => {
+            }
+            "add" => {
                 let b = self.arg(tokens[2]);
                 let a = self.get(tokens[1]);
                 *a += b;
-            },
+            }
             "mul" => {
                 let b = self.arg(tokens[2]);
                 let a = self.get(tokens[1]);
                 *a *= b;
-            },
+            }
             "div" => {
                 let b = self.arg(tokens[2]);
                 let a = self.get(tokens[1]);
                 *a /= b;
-            },
+            }
             "mod" => {
                 let b = self.arg(tokens[2]);
                 let a = self.get(tokens[1]);
                 *a %= b;
-            },
+            }
             "eql" => {
                 let b = self.arg(tokens[2]);
                 let a = self.get(tokens[1]);
-                *a = if *a == b {1} else {0};
-            },
-            _ => unreachable!()
+                *a = if *a == b { 1 } else { 0 };
+            }
+            _ => unreachable!(),
         }
         self.at += 1;
     }
 }
 
-fn dfs(code: &[String], init: &Alu, seen: &mut HashMap<Alu, Option<usize>>, inv: bool) -> Option<usize> {
+fn dfs(
+    code: &[String],
+    init: &Alu,
+    seen: &mut HashMap<Alu, Option<usize>>,
+    inv: bool,
+) -> Option<usize> {
     if let Some(result) = seen.get(init).cloned() {
         return result;
     }
@@ -104,7 +109,7 @@ fn dfs(code: &[String], init: &Alu, seen: &mut HashMap<Alu, Option<usize>>, inv:
         seq.reverse();
     }
     for x in seq {
-        let mut alu = init.clone();
+        let mut alu = *init;
         alu.put(code, x as i64);
         alu.run(code);
 
@@ -126,14 +131,14 @@ fn dfs(code: &[String], init: &Alu, seen: &mut HashMap<Alu, Option<usize>>, inv:
         }
     }
 
-    seen.insert(init.clone(), None);
+    seen.insert(*init, None);
     None
 }
 
 fn solve(code: &[String], inv: bool) -> usize {
     let mut seen = HashMap::new();
     let alu = Alu::default();
-    format!("{}", dfs(&code, &alu, &mut seen, inv).unwrap_or_default())
+    format!("{}", dfs(code, &alu, &mut seen, inv).unwrap_or_default())
         .chars()
         .rev()
         .collect::<String>()
