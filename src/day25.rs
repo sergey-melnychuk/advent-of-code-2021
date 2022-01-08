@@ -50,6 +50,7 @@ impl Grid {
             .collect()
     }
 
+    #[allow(dead_code)]
     fn dump(&self) -> String {
         let lines = self
             .chars
@@ -110,19 +111,14 @@ fn step(grid: &mut Grid) -> usize {
 fn main() {
     let lines = lines();
     let mut grid = parse(&lines);
-    println!("\n{}", grid.dump());
 
     let mut rounds = 0;
     loop {
         let n = step(&mut grid);
         rounds += 1;
-        //println!("\n{}", grid.dump());
         if n == 0 {
             break;
         }
-        // if rounds > 10 {
-        //     break;
-        // }
     }
 
     println!("{}", rounds);
